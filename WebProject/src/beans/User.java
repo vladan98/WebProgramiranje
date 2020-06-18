@@ -1,5 +1,8 @@
 package beans;
 
+import java.util.UUID;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 public class User {
 
 	private String id;
@@ -9,13 +12,28 @@ public class User {
 	private String lastName;
 	private Gender gender;
 	private Role role;
-	
-	private boolean isActive;
+	private boolean active;
 
 	public User() {}
 	
+	public User(String username, String password, String firstName, String lastName, Gender gender,
+			Role role) throws NoSuchAlgorithmException {
+		super();
+		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+		messageDigest.update(password.getBytes());
+		
+		this.id = UUID.randomUUID().toString();
+		this.username = username;
+		this.password = new String(messageDigest.digest());
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.gender = gender;
+		this.role = role;
+		this.active = true;
+	}
+	
 	public User(String id, String username, String password, String firstName, String lastName, Gender gender,
-			Role role, boolean isActive) {
+			Role role, boolean active) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -24,7 +42,7 @@ public class User {
 		this.lastName = lastName;
 		this.gender = gender;
 		this.role = role;
-		this.isActive = isActive;
+		this.active = active;
 	}
 
 	public String getId() {
@@ -83,13 +101,22 @@ public class User {
 		this.role = role;
 	}
 
+	
+
 	public boolean isActive() {
-		return isActive;
+		return active;
 	}
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", gender=" + gender + ", role=" + role + ", isActive=" + active + "]";
+	}
+	
 	
 	
 }
