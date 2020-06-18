@@ -44,6 +44,7 @@ public class User {
 		this.role = role;
 		this.active = active;
 	}
+	
 
 	public String getId() {
 		return id;

@@ -47,6 +47,7 @@ public class UserService {
 		for (User u : users) {
 			if (u.getUsername().equals(user.getUsername())) {
 				ind = 1;
+				break;
 			}
 		}
 		if (ind == 0) {
@@ -102,7 +103,7 @@ public class UserService {
 				u.setPassword(encodedPassword);
 				u.setFirstName(user.getFirstName());
 				u.setLastName(user.getLastName());
-				u.setGender(user.getGender());
+				u.setUsername(user.getUsername());
 				writeUsers(users);
 				request.getSession().setAttribute("loggedUser", u);
 				return Response.status(Response.Status.OK).entity(u).build();
