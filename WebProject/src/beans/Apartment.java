@@ -2,9 +2,11 @@ package beans;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 public class Apartment {
 
+	private String id;
 	private ApartmentType apartmentType;
 	private int rooms;
 	private int guests;
@@ -20,12 +22,15 @@ public class Apartment {
 	private ArrayList<String> reservationsId;
 	private boolean isActive;
 	
-	public Apartment() {}
+	public Apartment() {
+		this.id = UUID.randomUUID().toString();
+	}
 	
 	public Apartment(ApartmentType apartmentType, int rooms, int guests, Location location, ArrayList<Date> dates,
 			String hostId, ArrayList<String> commentsId, ArrayList<String> images, double price, Date checkIn,
 			Date chekOut, ArrayList<String> amenitiesId, ArrayList<String> reservationsId, boolean isActive) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.apartmentType = apartmentType;
 		this.rooms = rooms;
 		this.guests = guests;
@@ -40,6 +45,16 @@ public class Apartment {
 		this.amenitiesId = amenitiesId;
 		this.reservationsId = reservationsId;
 		this.isActive = isActive;
+	}
+	
+	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public ApartmentType getApartmentType() {

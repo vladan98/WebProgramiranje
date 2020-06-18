@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public class Comment {
 
+	private String id;
 	private String reviewerId;
 	private String apartmentId;
 	private String text;
@@ -14,10 +15,22 @@ public class Comment {
 	
 	public Comment(String reviewerId, String apartmentId, String text, int rate) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.reviewerId = reviewerId;
 		this.apartmentId = apartmentId;
 		this.text = text;
 		this.rate = rate;
+	}
+
+	
+
+	public String getId() {
+		return id;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 

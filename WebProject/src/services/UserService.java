@@ -24,6 +24,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import beans.Comment;
+import beans.Role;
 import beans.User;
 import config.PathConfig;
 
@@ -77,7 +79,7 @@ public class UserService {
 				return Response.status(Response.Status.OK).entity(u).build();
 			}
 		}
-		return Response.status(Response.Status.BAD_REQUEST).build();
+		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 	
 	@Path("/logout")
@@ -95,6 +97,12 @@ public class UserService {
 		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 		messageDigest.update(user.getPassword().getBytes());
 		String encodedPassword = new String(messageDigest.digest());
+		
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.FORBIDDEN).build();
+		if (!loggedUser.getUsername().equals(user.getUsername()))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		
 		ArrayList<User> users = readUsers();
 		for (User u : users) {
@@ -115,6 +123,13 @@ public class UserService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllUsers() throws IOException {
+		
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.ADMIN)
+			return Response.status(Response.Status.FORBIDDEN).build();
+		
 		ArrayList<User> users = readUsers();
 		return Response.status(Response.Status.OK).entity(users).build();
 	}
@@ -125,7 +140,7 @@ public class UserService {
 	public Response getUser() {
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		if (user == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 		return Response.status(Response.Status.OK).entity(user).build();
 	}
@@ -135,6 +150,12 @@ public class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response changeStatus(User user) throws JsonParseException, JsonMappingException, IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.ADMIN)
+			return Response.status(Response.Status.FORBIDDEN).build();
+		
 		ArrayList<User> users = readUsers();
 		for (User u : users) {
 			if (u.getId().equals(user.getId())) {
@@ -152,9 +173,15 @@ public class UserService {
 	}
 	
 	@GET
-    @Path("/{search}")
+    @Path("/search-all/{search}")
 	@Produces(MediaType.APPLICATION_JSON)
     public Response getResultByPassingValue(@PathParam("search") String search) throws IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.ADMIN)
+			return Response.status(Response.Status.FORBIDDEN).build();
+		
 		ArrayList<User> filteredUsers = new ArrayList<User>();
 		ArrayList<User> users = readUsers();
 		
@@ -167,7 +194,9 @@ public class UserService {
 	private ArrayList<User> readUsers() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		File userFile = new File(ctx.getRealPath(".") + PathConfig.USERS_FILE);
-		userFile.createNewFile();
+		boolean created = userFile.createNewFile();
+		if (created) 
+			mapper.writeValue(userFile, new ArrayList<User>());
 		return mapper.readValue(userFile, new TypeReference<ArrayList<User>>() {});
 	}
 	
@@ -176,5 +205,12 @@ public class UserService {
 		File userFile = new File(ctx.getRealPath(".") + PathConfig.USERS_FILE);
 		userFile.createNewFile();
 		mapper.writeValue(userFile, users);
+	}
+	
+	public User getUserById(String id) throws JsonParseException, JsonMappingException, IOException {
+		for (User u : readUsers()) {
+			if (u.getId().contentEquals(id)) return u;
+		}
+		return null;
 	}
 }
