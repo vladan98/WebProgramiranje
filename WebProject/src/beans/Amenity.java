@@ -1,5 +1,7 @@
 package beans;
 
+import java.util.UUID;
+
 public class Amenity {
 
 	private String id;
@@ -7,6 +9,12 @@ public class Amenity {
 	
 	public Amenity() {}
 
+	public Amenity(String name) {
+		super();
+		this.id = UUID.randomUUID().toString();
+		this.name = name;
+	}
+	
 	public Amenity(String id, String name) {
 		super();
 		this.id = id;

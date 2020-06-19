@@ -10,4 +10,5 @@ public class PathConfig {
 	public static final String COMMENTS_FILE = "/files/Comments.json";
 	public static final String AMENITIES_FILE = "/files/Amenities.json";
 	public static final String APARTMENT_IMAGES = "/files/images/";
+	public static final String RESERVATIONS_FILE = "/files/Reservations.json";
 }
