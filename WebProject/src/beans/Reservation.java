@@ -1,9 +1,11 @@
 package beans;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class Reservation {
 	
+	private String id;
 	private String apartmentId;
 	private Date startDate;
 	private int nights;
@@ -12,11 +14,14 @@ public class Reservation {
 	private String guestId;
 	private ReservationStatus status;
 	
-	public Reservation() {}
+	public Reservation() {
+		this.id = UUID.randomUUID().toString();
+	}
 	
 	public Reservation(String apartmentId, Date startDate, int nights, double price, String message, String guestId,
 			ReservationStatus status) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.apartmentId = apartmentId;
 		this.startDate = startDate;
 		this.nights = nights;
@@ -24,6 +29,16 @@ public class Reservation {
 		this.message = message;
 		this.guestId = guestId;
 		this.status = status;
+	}
+
+	
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getApartmentId() {

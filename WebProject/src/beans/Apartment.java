@@ -168,6 +168,16 @@ public class Apartment {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+
+	@Override
+	public String toString() {
+		return "Apartment [id=" + id + ", apartmentType=" + apartmentType + ", rooms=" + rooms + ", guests=" + guests
+				+ ", location=" + location + ", dates=" + dates + ", hostId=" + hostId + ", commentsId=" + commentsId
+				+ ", images=" + images + ", price=" + price + ", checkIn=" + checkIn + ", chekOut=" + chekOut
+				+ ", amenitiesId=" + amenitiesId + ", reservationsId=" + reservationsId + ", isActive=" + isActive
+				+ "]";
+	}
+	
 	
 	
 }
