@@ -1,8 +1,9 @@
 $(document).ready(function(){
 	//Get all apartments types and amenities
+	
 	$.ajax({
 		type:"GET",
-		url:"rest/amenities",
+		url:"rest/amenity",
 		contentType:"application/json",
 		success:function(amenities){
 			for(let amenity of amenities){
@@ -18,7 +19,7 @@ $(document).ready(function(){
 		event.preventDefault()
 		let appType = $('#appartmentType').val()
 		let roomsNumber = $('#rooms').val()
-		let quests = $('#guests').val()
+		let guests = $('#guests').val()
 		let street = $('#street').val()
 		let number = $('#number').val()
 		let city = $('#city').val()
@@ -28,7 +29,7 @@ $(document).ready(function(){
 		let startDate = $('#startDate').val()
 		let endDate = $('#endDate').val()
 		let price = $('#price').val()
-		if(roomsNumber == "0" || quests == "0" || street== "" || city == "" || startDate=="" || endDate ==""){
+		if(roomsNumber == "0" || guests == "0" || street== "" || city == "" || startDate=="" || endDate ==""){
 			alert('Fill fields...')
 			return
 		}
@@ -51,7 +52,7 @@ $(document).ready(function(){
 		var location = {
 			longitute: longitute,
 			latitute: latitute,
-			address: adress
+			address: address
 		}
 
 		// Check which amenities are selected
@@ -71,9 +72,9 @@ $(document).ready(function(){
 			type:"POST",
 			url: "rest/apartment",
 			data: JSON.stringify({
-				appartmentType: appType,
-				rooms: parseint(roomsNumber),
-				quests: parseint(quests),
+				apartmentType: appType,
+				rooms: parseInt(roomsNumber),
+				guests: parseInt(guests),
 				location: location,
 				dates: validDates,
 			}),
@@ -104,18 +105,16 @@ function addAmenity(amenity){
     );
 }
 
-Date.prototype.addDays = function(days) {
-    var date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-}
+
 
 function getDates(startDate, stopDate) {
     var dateArray = new Array();
     var currentDate = startDate;
     while (currentDate <= stopDate) {
         dateArray.push(new Date (currentDate));
-        currentDate = currentDate.addDays(1);
+		let date = new Date(currentDate);
+		date.setDate(date.getDate() + 1);
+        currentDate = date;
     }
     return dateArray;
 }

@@ -9,17 +9,22 @@ public class Comment {
 	private String apartmentId;
 	private String text;
 	private int rate;
+	private boolean approved;
 	
-	public Comment() {}
+	public Comment() {
+		this.id = UUID.randomUUID().toString();
+		approved = false;
+	}
 	
 	
-	public Comment(String reviewerId, String apartmentId, String text, int rate) {
+	public Comment(String reviewerId, String apartmentId, String text, int rate, boolean approved) {
 		super();
 		this.id = UUID.randomUUID().toString();
 		this.reviewerId = reviewerId;
 		this.apartmentId = apartmentId;
 		this.text = text;
 		this.rate = rate;
+		this.approved = approved;
 	}
 
 	
@@ -72,6 +77,18 @@ public class Comment {
 	public void setRate(int rate) {
 		this.rate = rate;
 	}
+
+
+	public boolean isApproved() {
+		return approved;
+	}
+
+
+	public void setApproved(boolean approved) {
+		this.approved = approved;
+	}
+	
+	
 	
 	
 }

@@ -43,6 +43,7 @@ import beans.Comment;
 import beans.Role;
 import beans.User;
 import config.PathConfig;
+import dto.FilterApartment;
 import util.apartment.ApartmentDateComparator;
 import util.apartment.ApartmentGuestsComparator;
 import util.apartment.ApartmentHostComparator;
@@ -161,7 +162,8 @@ public class ApartmentService {
 		if (loggedUser == null)
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		ArrayList<Apartment> apartments = readApartments();
-		apartments.stream().filter(apartment -> apartment.getHostId().equals(loggedUser.getId()));
+		apartments = apartments.stream().filter(apartment -> apartment.getHostId().equals(loggedUser.getId()))
+				.collect(Collectors.toCollection(ArrayList::new));
 		return Response.status(Response.Status.OK).entity(apartments).build();
 	}
 
@@ -209,29 +211,96 @@ public class ApartmentService {
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
+	@Path("add-dates/{id}")
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addDates(@PathParam("id") String id, Apartment apartment)
+			throws JsonParseException, JsonMappingException, IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.HOST)
+			return Response.status(Response.Status.FORBIDDEN).build();
+
+		ArrayList<Apartment> apartments = readApartments();
+		for (Apartment a : apartments) {
+			if (a.getId().equals(id) && a.getHostId().equals(loggedUser.getId())) {
+				a.getDates().addAll(apartment.getDates());
+				writeApartments(apartments);
+				return Response.status(Response.Status.OK).entity(a).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
 	@Path("/filter")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response filterApartments(@QueryParam("sort") String sort, Apartment apartment)
+	public Response filterApartments(@QueryParam("sort") String sort, FilterApartment filterApartment)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
-		if (loggedUser == null)
-			return Response.status(Response.Status.UNAUTHORIZED).build();
-		if (loggedUser.getRole() == Role.GUEST)
-			return Response.status(Response.Status.FORBIDDEN).build();
-
 		ArrayList<Apartment> apartments = readApartments();
-		if (apartment.getApartmentType() != null)
-			apartments.stream().filter(a -> a.getApartmentType() == apartment.getApartmentType());
-		if (apartment.getRooms() != 0)
-			apartments.stream().filter(a -> a.getRooms() == apartment.getRooms());
-		if (apartment.getGuests() != 0)
-			apartments.stream().filter(a -> a.getGuests() == apartment.getGuests());
-		if (apartment.getAmenitiesId() != null)
-			apartment.getAmenitiesId().stream()
-					.filter(a -> apartment.getAmenitiesId().stream().anyMatch(a2 -> a2.equals(a)));
+
+		if (filterApartment.getStartDate() != null)
+			apartments = apartments.stream()
+					.filter(apartment -> apartment.getDates().stream()
+							.anyMatch(date -> date.after(filterApartment.getStartDate())))
+					.collect(Collectors.toCollection(ArrayList::new));
+		if (filterApartment.getEndDate() != null)
+			apartments = apartments.stream()
+					.filter(apartment -> apartment.getDates().stream()
+							.anyMatch(date -> date.before(filterApartment.getEndDate())))
+					.collect(Collectors.toCollection(ArrayList::new));
+
+		if (filterApartment.getCity() != null)
+			apartments = apartments.stream()
+					.filter(apartment -> apartment.getLocation().getAddress().getCity().toLowerCase()
+							.contains(filterApartment.getCity().toLowerCase()))
+					.collect(Collectors.toCollection(ArrayList::new));
+
+		if (filterApartment.getPriceMin() != null)
+			apartments = apartments.stream().filter(apartment -> apartment.getPrice() >= filterApartment.getPriceMin())
+					.collect(Collectors.toCollection(ArrayList::new));
+		if (filterApartment.getPriceMax() != null)
+			apartments = apartments.stream().filter(apartment -> apartment.getPrice() <= filterApartment.getPriceMax())
+					.collect(Collectors.toCollection(ArrayList::new));
+
+		if (filterApartment.getRoomsMin() != null)
+			apartments = apartments.stream().filter(apartment -> apartment.getRooms() >= filterApartment.getRoomsMin())
+					.collect(Collectors.toCollection(ArrayList::new));
+		if (filterApartment.getRoomsMax() != null)
+			apartments = apartments.stream().filter(apartment -> apartment.getRooms() >= filterApartment.getRoomsMax())
+					.collect(Collectors.toCollection(ArrayList::new));
+
+		if (filterApartment.getGuestsMin() != null)
+			apartments = apartments.stream()
+					.filter(apartment -> apartment.getGuests() >= filterApartment.getGuestsMin())
+					.collect(Collectors.toCollection(ArrayList::new));
+		if (filterApartment.getGuestsMax() != null)
+			apartments = apartments.stream()
+					.filter(apartment -> apartment.getGuests() <= filterApartment.getGuestsMax())
+					.collect(Collectors.toCollection(ArrayList::new));
+
+		if (filterApartment.getApartmentType() != null) {
+			apartments = apartments.stream()
+					.filter(apartment -> apartment.getApartmentType() == filterApartment.getApartmentType())
+					.collect(Collectors.toCollection(ArrayList::new));
+		}
+
+		apartments = apartments.stream()
+				.filter(apartment -> apartment.getAmenitiesId().stream().anyMatch(
+						amenity -> filterApartment.getAmenitiesId().stream().anyMatch(a -> a.equals(amenity))))
+				.collect(Collectors.toCollection(ArrayList::new));
+
+		switch (sort) {
+		case "PRICE_ASC":
+			apartments.sort(new ApartmentHostComparator(Order.ASC));
+			break;
+		case "PRICE_DESC":
+			apartments.sort(new ApartmentHostComparator(Order.DESC));
+		}
 		return Response.status(Response.Status.OK).entity(apartments).build();
 	}
 
@@ -246,7 +315,7 @@ public class ApartmentService {
 		if (loggedUser.getRole() != Role.HOST)
 			return Response.status(Response.Status.FORBIDDEN).build();
 		Apartment apartment = new Apartment(a.getApartmentType(), a.getRooms(), a.getGuests(), a.getLocation(),
-				a.getDates(), a.getHostId(), new ArrayList<String>(), new ArrayList<String>(), a.getPrice(),
+				a.getDates(), loggedUser.getId(), new ArrayList<String>(), new ArrayList<String>(), a.getPrice(),
 				a.getCheckIn(), a.getChekOut(), a.getAmenitiesId(), new ArrayList<String>(), false);
 		ArrayList<Apartment> apartments = readApartments();
 		apartments.add(apartment);
@@ -267,31 +336,32 @@ public class ApartmentService {
 		System.out.println(apartmentId);
 		java.nio.file.Path BASE_DIR = Paths.get(ctx.getRealPath(".") + PathConfig.APARTMENT_IMAGES);
 		Files.copy(in, BASE_DIR.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-		
+
 		ArrayList<Apartment> apartments = readApartments();
 		for (Apartment apartment : apartments) {
 			if (apartment.getId().equals(apartmentId))
 				apartment.getImages().add(fileName);
-				writeApartments(apartments);
-				return Response.status(Response.Status.OK).entity(in).build();
+			writeApartments(apartments);
+			return Response.status(Response.Status.OK).entity(in).build();
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
+
 	@Path("/{id}/image")
 	@GET
 	public Response getImage(@PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
 		ArrayList<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
 		Apartment apartment = getApartmentById(id);
-		if (apartment == null) 
+		if (apartment == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		for (String image : apartment.getImages()) {
-			FileInputStream fileInputStream = new FileInputStream(new File(ctx.getRealPath(".") + PathConfig.APARTMENT_IMAGES + File.separator + image));
+			FileInputStream fileInputStream = new FileInputStream(
+					new File(ctx.getRealPath(".") + PathConfig.APARTMENT_IMAGES + File.separator + image));
 			fileInputStreams.add(fileInputStream);
 		}
 		return Response.status(Response.Status.OK).entity(fileInputStreams).build();
-		
+
 	}
-	
 
 	private Apartment getApartmentById(String id) throws JsonParseException, JsonMappingException, IOException {
 		ArrayList<Apartment> apartments = readApartments();
@@ -333,7 +403,9 @@ public class ApartmentService {
 			throws JsonParseException, JsonMappingException, IOException {
 		Apartment apartment = getApartmentById(apartmentId);
 		ArrayList<Comment> comments = readComments();
-		comments.stream().filter(comment -> apartment.getCommentsId().stream().anyMatch(id -> id == comment.getId()));
+		comments = comments.stream()
+				.filter(comment -> apartment.getCommentsId().stream().anyMatch(id -> id == comment.getId()))
+				.collect(Collectors.toCollection(ArrayList::new));
 		return comments;
 	}
 

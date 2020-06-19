@@ -3,6 +3,7 @@ package services;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class AmenityService {
 
 	@Context
 	HttpServletRequest request;
-	
+
 	@Path("")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -49,14 +50,14 @@ public class AmenityService {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		if (loggedUser.getRole() != Role.ADMIN)
 			return Response.status(Response.Status.FORBIDDEN).build();
-		
+
 		Amenity a = new Amenity(amenity.getName());
 		ArrayList<Amenity> amenities = readAmenities();
 		amenities.add(a);
 		writeAmenities(amenities);
 		return Response.status(Response.Status.OK).entity(a).build();
 	}
-	
+
 	@Path("")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -64,7 +65,7 @@ public class AmenityService {
 		ArrayList<Amenity> amenities = readAmenities();
 		return Response.status(Response.Status.OK).entity(amenities).build();
 	}
-	
+
 	@Path("/{id}")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -84,35 +85,37 @@ public class AmenityService {
 			}
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
-		
+
 	}
-	
+
 	@Path("/{id}")
 	@DELETE
-	public Response deleteAmenity(@PathParam("id") String id) throws JsonGenerationException, JsonMappingException, IOException {
+	public Response deleteAmenity(@PathParam("id") String id)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
 		if (loggedUser == null)
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		if (loggedUser.getRole() != Role.ADMIN)
 			return Response.status(Response.Status.FORBIDDEN).build();
-		
+
 		Amenity amenity = getAmenityById(id);
-		if (amenity == null) 
+		if (amenity == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
-		
+
 		ArrayList<Amenity> amenities = readAmenities();
-		amenities.stream().filter(a -> !a.getId().equals(id));
+		amenities = amenities.stream().filter(a -> !a.getId().equals(id))
+				.collect(Collectors.toCollection(ArrayList::new));
 		writeAmenities(amenities);
-		
+
 		ArrayList<Apartment> apartments = readApartments();
-		apartments.forEach(apartment -> apartment.getAmenitiesId().stream().filter(amenityId -> !amenityId.equals(id)));
+		apartments.forEach(apartment -> apartment.setAmenitiesId(apartment.getAmenitiesId().stream()
+				.filter(amenityId -> !amenityId.equals(id)).collect(Collectors.toCollection(ArrayList::new))));
 		writeApartments(apartments);
-		
+
 		return Response.status(Response.Status.OK).entity(amenity).build();
 	}
-	
-	
-	private ArrayList<Amenity> readAmenities() throws JsonGenerationException, JsonMappingException, IOException{
+
+	private ArrayList<Amenity> readAmenities() throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		File amenitiesFile = new File(ctx.getRealPath(".") + PathConfig.AMENITIES_FILE);
 		boolean created = amenitiesFile.createNewFile();
@@ -121,14 +124,14 @@ public class AmenityService {
 		return mapper.readValue(amenitiesFile, new TypeReference<ArrayList<Amenity>>() {
 		});
 	}
-	
+
 	private void writeAmenities(ArrayList<Amenity> amenities) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		File amenitiesFile = new File(ctx.getRealPath(".") + PathConfig.AMENITIES_FILE);
 		amenitiesFile.createNewFile();
 		mapper.writeValue(amenitiesFile, amenities);
 	}
-	
+
 	private Amenity getAmenityById(String id) throws JsonGenerationException, JsonMappingException, IOException {
 		ArrayList<Amenity> amenities = readAmenities();
 		for (Amenity amenity : amenities) {
@@ -137,7 +140,7 @@ public class AmenityService {
 		}
 		return null;
 	}
-	
+
 	private ArrayList<Apartment> readApartments() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		File apartmentsFile = new File(ctx.getRealPath(".") + PathConfig.APARTMENTS_FILE);
