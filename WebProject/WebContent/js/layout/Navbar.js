@@ -43,6 +43,9 @@ $(document).ready(() => {
                 <span class="sr-only">(current)</span>
               </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="newAppartment.html">New Apartment</a>
+        </li>
 		${links}
         
         <li class="nav-item">
