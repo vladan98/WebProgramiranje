@@ -1,15 +1,32 @@
 $(document).ready(() => {
   let user = JSON.parse(localStorage.getItem("user"));
 
-let adminLinks = `<li class="nav-item">
-          <a class="nav-link" href="newAppartment.html">New Apartment</a>
-        </li>
+  let adminLinks = `
+    
+
+    <li class="nav-item">
+      <a class="nav-link" href="newAmenity.html">Amenities</a>
+    </li>
+	 
 	<li class="nav-item">
-          <a class="nav-link" href="newAmenity.html">Amenities</a>
-        </li>
+      <a class="nav-link" href="users.html">Users</a>
+    </li>
+
+	<li class="nav-item">
+      <a class="nav-link" href="apartments.html">Apartments</a>
+    </li>
+`;
+  let hostLinks = `
+    <li class="nav-item">
+      <a class="nav-link" href="newAppartment.html">New Apartment</a>
+    </li>
 `;
 
-let links = user.role == "ADMIN" ? adminLinks : null;
+	let links = "";
+	if (user.role == "ADMIN")
+		links = adminLinks;
+	if (user.role == "HOST")
+		links = hostLinks;
 
 
   let navbarContent = `<div class="container">

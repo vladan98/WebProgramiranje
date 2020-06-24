@@ -172,10 +172,36 @@ public class ApartmentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeApartment(@PathParam("id") String id)
 			throws JsonParseException, JsonMappingException, IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() == Role.GUEST)
+			return Response.status(Response.Status.FORBIDDEN).build();
 		ArrayList<Apartment> apartments = readApartments();
 		for (Apartment a : apartments) {
 			if (a.getId().equals(id)) {
 				a.setActive(false);
+				writeApartments(apartments);
+				return Response.status(Response.Status.OK).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+	
+	@Path("activate/{id}")
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setApartmentActive(@PathParam("id") String id)
+			throws JsonParseException, JsonMappingException, IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.HOST)
+			return Response.status(Response.Status.FORBIDDEN).build();
+		ArrayList<Apartment> apartments = readApartments();
+		for (Apartment a : apartments) {
+			if (a.getId().equals(id)) {
+				a.setActive(true);
 				writeApartments(apartments);
 				return Response.status(Response.Status.OK).build();
 			}
@@ -316,7 +342,7 @@ public class ApartmentService {
 			return Response.status(Response.Status.FORBIDDEN).build();
 		Apartment apartment = new Apartment(a.getApartmentType(), a.getRooms(), a.getGuests(), a.getLocation(),
 				a.getDates(), loggedUser.getId(), new ArrayList<String>(), new ArrayList<String>(), a.getPrice(),
-				a.getCheckIn(), a.getChekOut(), a.getAmenitiesId(), new ArrayList<String>(), false);
+				a.getCheckIn(), a.getCheckOut(), a.getAmenitiesId(), new ArrayList<String>(), false);
 		ArrayList<Apartment> apartments = readApartments();
 		apartments.add(apartment);
 		writeApartments(apartments);
