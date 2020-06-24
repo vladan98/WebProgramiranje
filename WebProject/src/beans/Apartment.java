@@ -17,7 +17,7 @@ public class Apartment {
 	private ArrayList<String> images;
 	private double price;
 	private Date checkIn;
-	private Date chekOut;
+	private Date checkOut;
 	private ArrayList<String> amenitiesId;
 	private ArrayList<String> reservationsId;
 	private boolean isActive;
@@ -28,7 +28,7 @@ public class Apartment {
 	
 	public Apartment(ApartmentType apartmentType, int rooms, int guests, Location location, ArrayList<Date> dates,
 			String hostId, ArrayList<String> commentsId, ArrayList<String> images, double price, Date checkIn,
-			Date chekOut, ArrayList<String> amenitiesId, ArrayList<String> reservationsId, boolean isActive) {
+			Date checkOut, ArrayList<String> amenitiesId, ArrayList<String> reservationsId, boolean isActive) {
 		super();
 		this.id = UUID.randomUUID().toString();
 		this.apartmentType = apartmentType;
@@ -41,7 +41,7 @@ public class Apartment {
 		this.images = images;
 		this.price = price;
 		this.checkIn = checkIn;
-		this.chekOut = chekOut;
+		this.checkOut = checkOut;
 		this.amenitiesId = amenitiesId;
 		this.reservationsId = reservationsId;
 		this.isActive = isActive;
@@ -137,12 +137,12 @@ public class Apartment {
 		this.checkIn = checkIn;
 	}
 
-	public Date getChekOut() {
-		return chekOut;
+	public Date getCheckOut() {
+		return checkOut;
 	}
 
 	public void setChekOut(Date chekOut) {
-		this.chekOut = chekOut;
+		this.checkOut = chekOut;
 	}
 
 	public ArrayList<String> getAmenitiesId() {
@@ -173,7 +173,7 @@ public class Apartment {
 	public String toString() {
 		return "Apartment [id=" + id + ", apartmentType=" + apartmentType + ", rooms=" + rooms + ", guests=" + guests
 				+ ", location=" + location + ", dates=" + dates + ", hostId=" + hostId + ", commentsId=" + commentsId
-				+ ", images=" + images + ", price=" + price + ", checkIn=" + checkIn + ", chekOut=" + chekOut
+				+ ", images=" + images + ", price=" + price + ", checkIn=" + checkIn + ", chekOut=" + checkOut
 				+ ", amenitiesId=" + amenitiesId + ", reservationsId=" + reservationsId + ", isActive=" + isActive
 				+ "]";
 	}

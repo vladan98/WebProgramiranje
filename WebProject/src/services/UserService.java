@@ -16,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -151,11 +152,11 @@ public class UserService {
 		return Response.status(Response.Status.OK).entity(user).build();
 	}
 
-	@Path("/change-status")
+	@Path("/change-status/{id}")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response changeStatus(User user)
+	public Response changeStatus(@PathParam("id") String id)
 			throws JsonParseException, JsonMappingException, IOException, NoSuchAlgorithmException {
 		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
 		if (loggedUser == null)
@@ -165,7 +166,7 @@ public class UserService {
 
 		ArrayList<User> users = readUsers();
 		for (User u : users) {
-			if (u.getId().equals(user.getId())) {
+			if (u.getId().equals(id)) {
 				if (u.isActive()) {
 					u.setActive(false);
 				} else {
@@ -180,25 +181,27 @@ public class UserService {
 	}
 
 	@GET
-	@Path("/search-all/admin/{search}")
+	@Path("/search-all/admin/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchUsersAdmin(@PathParam("search") String search) throws IOException, NoSuchAlgorithmException {
+	public Response searchUsersAdmin(@QueryParam("username") String username, @QueryParam("gender") Gender gender, @QueryParam("role") Role role) throws IOException, NoSuchAlgorithmException {
 		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
 		if (loggedUser == null)
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		if (loggedUser.getRole() != Role.ADMIN)
 			return Response.status(Response.Status.FORBIDDEN).build();
 
-		ArrayList<User> filteredUsers = new ArrayList<User>();
 		ArrayList<User> users = readUsers();
-
-		for (User u : users) {
-			if (u.getUsername().toLowerCase().contains(search.toLowerCase())
-					|| u.getFirstName().toLowerCase().contains(search.toLowerCase())
-					|| u.getLastName().toLowerCase().contains(search.toLowerCase()))
-				filteredUsers.add(u);
-		}
-		return Response.status(Response.Status.OK).entity(filteredUsers).build();
+		
+		if (username != null)
+			users = users.stream().filter(user -> user.getUsername().toLowerCase().contains(username.toLowerCase())).collect(Collectors.toCollection(ArrayList::new));
+	
+		if (gender != null)
+			users = users.stream().filter(user -> user.getGender() == gender).collect(Collectors.toCollection(ArrayList::new));
+		
+		if (gender != null)
+			users = users.stream().filter(user -> user.getRole() == role).collect(Collectors.toCollection(ArrayList::new));
+		
+		return Response.status(Response.Status.OK).entity(users).build();
 	}
 
 	@GET
