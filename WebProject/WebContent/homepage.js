@@ -12,17 +12,6 @@ $(document).ready(function(){
 	}
 	
 	$('#check').text(user.username)
-	//Logout
-	$('#logout').click(function(){
-		//Ajax poziv za logout
-		$.ajax({
-			type:"POST",
-			url:'rest/user/logout',
-			success: function(){
-				window.location.href="login.html"
-			}
-		})
-	})
 	
 	//update profile
 })

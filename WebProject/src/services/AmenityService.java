@@ -112,7 +112,7 @@ public class AmenityService {
 				.filter(amenityId -> !amenityId.equals(id)).collect(Collectors.toCollection(ArrayList::new))));
 		writeApartments(apartments);
 
-		return Response.status(Response.Status.OK).entity(amenity).build();
+		return Response.status(Response.Status.OK).build();
 	}
 
 	private ArrayList<Amenity> readAmenities() throws JsonGenerationException, JsonMappingException, IOException {
