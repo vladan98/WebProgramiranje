@@ -13,7 +13,10 @@ $(document).ready(function(){
 		let confirm = $('#confirm').val()
 		let genderString = $('#gender').val()
 		let gender = parseInt(genderString)
-		if(username=="" || password=="" ||firstName=="" || password==""){
+		let roleString = $('#role').val()
+		let role = parseInt(roleString)
+		console.log(role)
+		if(username=="" || password=="" ||firstName=="" || password=="" || roleString == ""){
 			alert('fill all fields!')
 			return;
 		}
@@ -31,7 +34,8 @@ $(document).ready(function(){
 				lastName: lastName,
 				username: username,
 				password: password,
-				gender: gender
+				gender: gender,
+				role: role,
 			}),
 			contentType: "application/json",
 			success: function(user){
