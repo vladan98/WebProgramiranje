@@ -11,16 +11,101 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+.container {
+  padding: 2rem 0rem;
+}
 
+h4 {
+  margin: 2rem 0rem 1rem;
+}
+
+.table-image {
+  td, th {
+    vertical-align: middle;
+  }
+}
+</style>
 </head>
-<body>
+<body class="antialiased bg-gray-200 font-sans">
 
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"></nav>
 
-
 <h2>Welcome to home page</h2>
-<p>Logged in user: </p><p id="check"></p>
+<br>
+Looking for apartments? Checkout...
+<br>
+<br>
+<form id="search">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Location</label>
+    <input type="text" class="form-control" name="value" id="location" aria-describedby="emailHelp" placeholder="Enter Location">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Sorting</label>
+    <select id="sort" name="sort">
+    	<option value="DATE_ASC">Date ascending</option>
+    	<option value="DATE_DESC">Date descending</option>
+    	<option value="GUEST_ASC">guests ascending</option>
+    	<option value="GUEST_DESC">guests descending</option>
+    	<option value="HOST_ASC">host ascending</option>
+    	<option value="HOST_DESC">host descending</option>
+    	<option value="PRICE_ASC">Price ascending</option>
+    	<option value="PRICE_DESC">Price descending</option>
+    	<option value="ROOM_ASC">Rooms ascending</option>
+    	<option value="ROOM_DESC">Rooms descending</option>
+    	<option value="TYPE_ASC">Type ascending</option>
+    	<option value="TYPE_DESC">Type descending</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+		<table class="table table-image" id="result">
+		  <thead>
+		    <tr>
+		      <th scope="col">Result</th>
+		      <th scope="col">Image</th>
+		      <th scope="col">Appartment type</th>
+		      <th scope="col">Location</th>
+		      <th scope="col">Rooms</th>
+		      <th scope="col">Guests</th>
+		      <th scope="col">Price</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr>
+		      <th scope="row">1</th>
+		      <td class="w-25">
+			      <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/sheep-3.jpg" class="img-fluid img-thumbnail" alt="Sheep">
+		      </td>
+		      <td>Bootstrap 4 CDN and Starter Template</td>
+		      <td>Cristina</td>
+		      <td>913</td>
+		      <td>2.846</td>
+		       <td>2.846</td>
+		    </tr>
+		    <tr>
+		      <th scope="row">2</th>
+		      <td class="w-25">
+			      <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/sheep-5.jpg" class="img-fluid img-thumbnail" alt="Sheep">
+		      </td>
+		      <td>Bootstrap Grid 4 Tutorial and Examples</td>
+		      <td>Cristina</td>
+		      <td>1.434</td>
+		      <td>3.417</td>
+		       <td>2.846</td>
+		    </tr>
+		  </tbody>
+		</table>   
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

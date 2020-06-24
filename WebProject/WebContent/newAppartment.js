@@ -6,6 +6,7 @@ $(document).ready(function(){
 		url:"rest/amenity",
 		contentType:"application/json",
 		success:function(amenities){
+			console.log(amenities)
 			for(let amenity of amenities){
 				addAmenity(amenity)
 			}
@@ -56,18 +57,21 @@ $(document).ready(function(){
 		}
 
 		// Check which amenities are selected
+		var amenities = []
 		var $boxes = $('input[name=amenities]:checked');
 		$boxes.each(function(){
-			console.log($(this).val())
+			amenities.push($(this).val())
 		})
-
+		console.log('all amenities: ' + amenities)
 		//Get dates included between start and endDate
 		var dateFrom = Date.parse(startDate)
 		var dateTo = Date.parse(endDate)
 		var validDates = getDates(dateFrom, dateTo)
 		console.log(validDates)
 
-
+		//convert price to double
+		let priceDouble = parseFloat(price)
+		
 		$.ajax({
 			type:"POST",
 			url: "rest/apartment",
@@ -77,6 +81,8 @@ $(document).ready(function(){
 				guests: parseInt(guests),
 				location: location,
 				dates: validDates,
+				amenitiesId: amenities,
+				price: price,
 			}),
 			contentType:"application/json",
 			success: function(){
@@ -92,17 +98,12 @@ $(document).ready(function(){
 })
 
 function addAmenity(amenity){
-	$('#checkboxes')
-    .append(
-       $(document.createElement('input')).attr({
-           name:  'amenities',
-           value:  amenity.id,
-           type:  'checkbox'
-       })
-    .append(
-    	$('<label>'+amenity.name+'</label>')
-    )
-    );
+	$("#checkboxes").append(`
+	<div class="form-check">
+			<input type="checkbox" class="form-check-input" id="${amenity.id}" name="amenities" value="${amenity.id}" >
+			<label class="form-check-label" for="${amenity.id}">${amenity.name}</label>
+	</div>
+	`);
 }
 
 
@@ -117,4 +118,11 @@ function getDates(startDate, stopDate) {
         currentDate = date;
     }
     return dateArray;
+}
+
+const test = () => {
+	let x = $("input[name=amenities]:checked");
+	x.each(function(){
+		console.log($(this).val())
+	})
 }
