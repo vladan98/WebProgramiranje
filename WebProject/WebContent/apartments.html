@@ -19,6 +19,233 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"></nav>
 
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">Filter apartments</div>
+            <div class="card-body">
+              <form
+                class="form-horizontal"
+                id="filter-apartments-form"
+                method="POST"
+              >
+                <div class="form-group">
+                  <label for="gender" class="cols-sm-2 control-label"
+                    >Apartment type</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-user fa" aria-hidden="true"></i
+                      ></span>
+                      <select class="form-control" name="type" id="type">
+                        <option value="APARTMENT" selected>Apartment</option>
+                        <option value="ROOM">Room</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="confirm" class="cols-sm-2 control-label"
+                    >Start date</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input type="date" id="startDate" name="startDate" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="confirm" class="cols-sm-2 control-label"
+                    >End date</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input type="date" id="endDate" name="endDate" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="city" class="cols-sm-2 control-label">City</label>
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="city"
+                        id="city"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="priceMin" class="cols-sm-2 control-label"
+                    >Price Min</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="priceMin"
+                        id="priceMin"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="priceMax" class="cols-sm-2 control-label"
+                    >Price Max</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="priceMax"
+                        id="priceMax"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="roomsMin" class="cols-sm-2 control-label"
+                    >Rooms Min</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="roomsMin"
+                        id="roomsMin"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="roomsMax" class="cols-sm-2 control-label"
+                    >Rooms Max</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="roomsMax"
+                        id="roomsMax"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="guestsMin" class="cols-sm-2 control-label"
+                    >Guests Min</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="guestsMin"
+                        id="guestsMin"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="guestsMax" class="cols-sm-2 control-label"
+                    >Guests Max</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-lock fa-lg" aria-hidden="true"></i
+                      ></span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="guestsMax"
+                        id="guestsMax"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="price" class="cols-sm-2 control-label"
+                    >Amenities</label
+                  >
+                  <div class="cols-sm-10">
+                    <div class="input-group" id="checkboxes"></div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="sort" class="cols-sm-2 control-label">Sort</label>
+                  <div class="cols-sm-10">
+                    <div class="input-group">
+                      <span class="input-group-addon"
+                        ><i class="fa fa-user fa" aria-hidden="true"></i
+                      ></span>
+                      <select class="form-control" name="sort" id="sort">
+                        <option value="PRICE_ASC" selected
+                          >Price ascending</option
+                        >
+                        <option value="PRICE_DESC">Price descending</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <input
+                    type="submit"
+                    class="btn btn-primary btn-lg btn-block login-button"
+                    value="Filter"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal -->
     <div
       class="modal fade"
@@ -63,9 +290,11 @@
           <th>Rooms</th>
           <th>Guests</th>
           <th>Comments</th>
+		<th>Amenities</th>
           <th>Check In</th>
           <th>Check Out</th>
           <th>Status</th>
+          <td> Remove <th>
         </thead>
         <tbody id="apartments"></tbody>
       </table>

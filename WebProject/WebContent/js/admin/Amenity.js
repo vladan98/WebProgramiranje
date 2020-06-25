@@ -45,7 +45,6 @@ const addAmenity = (event) => {
 
 const getAmenities = () => {
   $("#amenities").empty();
-  $("#amenities").append("<h1> Amenities </h1>");
 
   $.ajax({
     type: "GET",
@@ -53,7 +52,7 @@ const getAmenities = () => {
     success: (amenities) => {
       amenities.forEach((amenity) => {
         $("#amenities").append(
-          ` <h3 style="display: inline; text-align: center"> <span onClick="editAmenity('${amenity.id}', '${amenity.name}')" class="badge badge-pill badge-light">${amenity.name} <span onClick="removeAmenity('${amenity.id}')" aria-hidden="true">&times;</span> </span>  </h3> `
+          ` <h3 style="display: inline"> <span onClick="editAmenity('${amenity.id}', '${amenity.name}')" class="badge badge-pill badge-light">${amenity.name} <span onClick="removeAmenity('${amenity.id}')" aria-hidden="true">&times;</span> </span>  </h3> `
         );
       });
     },

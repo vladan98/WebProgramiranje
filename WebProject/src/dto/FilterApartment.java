@@ -95,6 +95,17 @@ public class FilterApartment {
 	public void setGuestsMax(Integer guestsMax) {
 		this.guestsMax = guestsMax;
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "FilterApartment [apartmentType=" + apartmentType + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", city=" + city + ", priceMin=" + priceMin + ", priceMax=" + priceMax + ", roomsMin=" + roomsMin
+				+ ", roomsMax=" + roomsMax + ", guestsMin=" + guestsMin + ", guestsMax=" + guestsMax + ", amenitiesId="
+				+ amenitiesId + "]";
+	}
+	
 	
 	
 }

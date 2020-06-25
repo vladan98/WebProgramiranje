@@ -187,7 +187,7 @@ public class ApartmentService {
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
-	
+
 	@Path("activate/{id}")
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
@@ -267,6 +267,9 @@ public class ApartmentService {
 	public Response filterApartments(@QueryParam("sort") String sort, FilterApartment filterApartment)
 			throws JsonParseException, JsonMappingException, IOException {
 
+		System.out.println(sort);
+		System.out.println(filterApartment);
+
 		ArrayList<Apartment> apartments = readApartments();
 
 		if (filterApartment.getStartDate() != null)
@@ -315,10 +318,12 @@ public class ApartmentService {
 					.collect(Collectors.toCollection(ArrayList::new));
 		}
 
-		apartments = apartments.stream()
-				.filter(apartment -> apartment.getAmenitiesId().stream().anyMatch(
-						amenity -> filterApartment.getAmenitiesId().stream().anyMatch(a -> a.equals(amenity))))
-				.collect(Collectors.toCollection(ArrayList::new));
+		if (filterApartment.getAmenitiesId() != null)
+			if (filterApartment.getAmenitiesId().size() > 0)
+				apartments = apartments.stream()
+						.filter(apartment -> apartment.getAmenitiesId().stream().anyMatch(
+								amenity -> filterApartment.getAmenitiesId().stream().anyMatch(a -> a.equals(amenity))))
+						.collect(Collectors.toCollection(ArrayList::new));
 
 		switch (sort) {
 		case "PRICE_ASC":
@@ -340,9 +345,12 @@ public class ApartmentService {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		if (loggedUser.getRole() != Role.HOST)
 			return Response.status(Response.Status.FORBIDDEN).build();
+		ArrayList<String> amenities = new ArrayList<String>();
+		if (a.getAmenitiesId() != null)
+			amenities = a.getAmenitiesId();
 		Apartment apartment = new Apartment(a.getApartmentType(), a.getRooms(), a.getGuests(), a.getLocation(),
 				a.getDates(), loggedUser.getId(), new ArrayList<String>(), new ArrayList<String>(), a.getPrice(),
-				a.getCheckIn(), a.getCheckOut(), a.getAmenitiesId(), new ArrayList<String>(), false);
+				a.getCheckIn(), a.getCheckOut(), amenities, new ArrayList<String>(), false);
 		ArrayList<Apartment> apartments = readApartments();
 		apartments.add(apartment);
 		writeApartments(apartments);

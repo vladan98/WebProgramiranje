@@ -5,12 +5,21 @@
 
     <script src="./js/layout/Navbar.js"></script>
     <script src="./js/admin/Amenity.js"></script>
+    <style>
+    #amenities h3 span:hover{
+    cursor: pointer;
+    }
+    #amenities > h3 > span > span:hover{
+    color: red;
+    }
+    </style>
   </head>
   <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"></nav>
 
-    <div id="amenities"></div>
+	<h1 class='text-center'> Amenities </h1>
+    <div style="display: flex;justify-content: center;flex-direction: row;" id="amenities"></div>
 
     <!-- New Amenity Form -->
     <div class="container">
