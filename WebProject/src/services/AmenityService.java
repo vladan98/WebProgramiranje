@@ -65,6 +65,14 @@ public class AmenityService {
 		ArrayList<Amenity> amenities = readAmenities();
 		return Response.status(Response.Status.OK).entity(amenities).build();
 	}
+	
+	@Path("/{id}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAmenity(@PathParam("id")String id) throws JsonGenerationException, JsonMappingException, IOException {
+		Amenity amenity = getAmenityById(id);
+		return Response.status(Response.Status.OK).entity(amenity).build();
+	}
 
 	@Path("/{id}")
 	@PUT

@@ -36,6 +36,8 @@ $(document).ready(function(){
 			}
 		})
 	})
+	
+	
 })
 
 function addAppartmentToTable(aprt){
@@ -49,5 +51,19 @@ function addAppartmentToTable(aprt){
 	let dtprice = $('<td>' + aprt.price + '</td>')
 	tr.append(th).append(tdImage).append(tdType).append(tdLoc).append(tdRooms).append(tdGuests).append(dtprice)
 	$('#result tbody').append(tr)
+	
+	tr.click(clickClosure(aprt));
+}
+
+function clickClosure(aprt){
+	return function() {
+		// Parametar product prosleđen u gornju funkciju će biti vidljiv u ovoj
+		// Ovo znači da je funkcija "zapamtila" za koji je apartman vezana
+		$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		console.log(aprt)
+		localStorage.wantedApartment = JSON.stringify(aprt)
+		window.location.href= "ViewOneApartment.html"
+	};
 }
 

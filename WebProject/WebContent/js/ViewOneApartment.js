@@ -1,0 +1,123 @@
+/**
+ * 
+ */
+$(document).ready(function(){
+	let apartment = JSON.parse(localStorage.wantedApartment)
+	console.log(apartment)
+	//Get all amenities for current apartment
+	apartment.amenitiesId.forEach(function (amenityId, index) {
+		$.ajax({
+			type: "GET",
+			url: "rest/amenity/" + amenityId,
+			contentType: "application/json",
+			success: function(amenity){
+				addAmenityToList(amenity)
+			},
+			error: function(error){
+				console.log(error)
+			}
+		})
+	});
+	
+	//GET COMMENTS for APArtment
+	if(apartment.commentsId.length != 0){
+		$.ajax({
+			type: "GET",
+			url: "rest/comment/appartment/" + apartment.id +"/guest",
+			contentType: "application/json",
+			success: function(comments){
+				for(let comm of comments){
+					addCommentToTable(comm)
+				}
+			},
+			error: function(error){
+				console.log(error)
+			}
+		})
+	}
+	
+	
+	addAppartmentToTable(apartment)
+	$('#type').append(`<p>${apartment.apartmentType}</p>`)
+	
+	//Parsing dates and setting to date picker
+	let firstDate = apartment.dates[0]
+	let lastDate = apartment.dates[apartment.dates.length-1]
+	var date1 = new Date(firstDate); //convert miliseconds to date
+	var date2 = new Date(lastDate);
+	let date3 = moment(date1, date1.toString()).format("YY/MM/DD")
+	let date4 = moment(date2, date2.toString()).format("YY/MM/DD")
+	console.log(date3)
+	console.log(date4)
+
+	$('#fromDate').text("Start date: " + date3)
+	$('#toDate').text("End date: "  + date4)
+	console.log(date1.toString() + " " + date2.toString(0))
+
+	$(function() {
+		  $('input[name="daterange"]').daterangepicker({
+		    opens: 'left',
+		    startDate: date3,
+		    endDate: date4,
+		    locale: {
+		      format: 'YY/MM/DD'
+		    }
+		  }, function(start, end, label) {
+		    if(start < date1 || end > date2){
+		    	alert('pick a propriete date!')
+		    	return
+		    }
+		    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+		  });
+	});
+		
+})
+
+
+
+function addAppartmentToTable(aprt){
+	let tr = $('<tr></tr>')
+	//let tdImage = $('<td class="w-25"><img src="${aprt.images[0]}" class="img-fluid img-thumbnail" alt="Sheep"></td>')
+	let tdType = $('<td>' + aprt.apartmentType +'</td>')
+	let tdRooms = $('<td>' + aprt.rooms + '</td>')
+	let tdGuests = $('<td>' + aprt.guests + '</td>')
+	let tdLoc = $('<td>' + aprt.location.address.street +" " +aprt.location.address.number + " " + aprt.location.address.city  +'</td>')
+	let tdCheckIn = $('<td>' + aprt.CheckIn + '</td>')
+	let tdCheckOut = $('<td>' + aprt.CheckOut + '</td>')
+	let dtprice = $('<td>' + aprt.price + '</td>')
+	tr.append(tdType).append(tdRooms).append(tdGuests).append(tdLoc).append(tdCheckIn).append(tdCheckOut).append(dtprice)
+	$('#apartment').append(tr)
+//	tr.click(clickClosure(aprt));
+}
+
+function addAmenityToList(amenity){
+	console.log(amenity)
+	let li = $('<li class="list-group-item>' + amenity.name + '</li>')
+	$('#amenities').append(`<li class="list-group-item">${amenity.name}</li>`)
+}
+
+function addCommentToTable(comment){
+	//get reviewer
+	let reviewer = ''
+	$.ajax({
+		type:"GET",
+		url:'rest/user/' + comment.reviewerId,
+		contentType: "application/json",
+		success:function(user){
+			console.log(user.username)
+			reviewer = username
+		},
+		error: function(error){
+			console.log(error)
+		}
+	})
+	//Add fields to table
+	let tr = $('<tr></tr>')
+	let tdReviewer = $('<td>' + reviewer + '</td>')
+	let tdComment = $('<td>' + comment.text + '</td>')
+	let tdRate = $('<td>' + comment.rate + '</td>')
+	tr.append(tdReviewer).append(tdComment).append(tdRate)
+	$('#comments tbody').append(tr)
+	
+}
+
