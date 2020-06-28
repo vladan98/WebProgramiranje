@@ -48,8 +48,6 @@ div.desc {
           <th>Rooms</th>
           <th>Guests</th>
           <th>Address</th>
-          <th>Check In</th>
-          <th>Check Out</th>
           <th>Price</th>
         </thead>
         <tbody id="apartment"></tbody>
@@ -72,9 +70,31 @@ div.desc {
     <p id="fromDate"></p>
     <p id="toDate"></p>
     <h4>Pick a date which for you want to create reservation</h4>
-    <form>
-    	<input name="daterange" size="70">
+    
+    <!--  FORM to submit -->
+    <div class="p-3 mb-2 bg-secondary text-white">
+    <form id="reservation">
+    <table>
+    	<tr>
+    		<td><label>Pick a date you want to appoint: </label></td>
+    		<td><input name="daterange" size="70"></td>
+    	</tr>
+    	<tr>
+    		<td><label>Nights: </label></td>
+    		<td><input type="number" id="nightsNumber"></td>
+    	</tr>
+    	<tr>
+    		<td><label>Message or note to host:</label></td>
+    	</tr>
+    	<tr>
+    		<td><textarea rows="4" cols="50" name="comment" id="message" form="reservation"></textarea></td>
+    	</tr>
+    	<tr>
+    		<td><input type="submit" value="Appoint"></td>
+    	</tr>
+    </table>
     </form>
+    </div>
     
     <br>
     

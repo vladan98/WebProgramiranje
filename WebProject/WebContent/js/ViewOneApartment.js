@@ -3,7 +3,11 @@
  */
 $(document).ready(function(){
 	let apartment = JSON.parse(localStorage.wantedApartment)
+	var user = JSON.parse(localStorage.getItem('user'));
 	console.log(apartment)
+	
+	let startDate ='';
+	let endDate = '';
 	//Get all amenities for current apartment
 	apartment.amenitiesId.forEach(function (amenityId, index) {
 		$.ajax({
@@ -60,16 +64,57 @@ $(document).ready(function(){
 		    startDate: date3,
 		    endDate: date4,
 		    locale: {
-		      format: 'YY/MM/DD'
+		      format: 'YYYY/MM/DD'
 		    }
 		  }, function(start, end, label) {
 		    if(start < date1 || end > date2){
 		    	alert('pick a propriete date!')
 		    	return
 		    }
+		    startDate = start.format('YYYY-MM-DD')
+		    endDate = end.format('YYYY-MM-DD')
 		    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
 		  });
 	});
+	
+	$('form#reservation').submit(function(event){
+		event.preventDefault()
+		let apartmentId = apartment.id
+		console.log(startDate)
+		//console.log(endDate)
+		var date = new Date(startDate)
+		let nights = $('#nightsNumber').val()
+		let nightsInt = parseInt(nights)
+		let price = apartment.price
+		let message = $('#message').val()
+		let guestId = user.id
+		if(startDate == '' || endDate == ''){
+			alert('Pick date!')
+			return
+		}
+		//Sending ajax request to create reservation
+		$.ajax({
+			type:"POST",
+			url:"rest/reservation",
+			contentType: "application/json",
+			data: JSON.stringify({
+				apartmentId: apartmentId,
+				startDate: date,
+				nights: nights,
+				price: price,
+				message: message,
+				guestId: user.id
+			}),
+			success: function(reservation){
+				alert('Successfully created reservation with ID : ' + reservation.id)
+				window.location.href="homepage.html"
+			},
+			error: function(error){
+				console.log(error)
+			}
+			
+		})
+	})
 		
 })
 

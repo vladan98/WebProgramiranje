@@ -141,6 +141,68 @@ public class ApartmentService {
 		}
 		return Response.status(Response.Status.OK).entity(searchedApartments).build();
 	}
+	
+	@Path("/search/host")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchApartmentsAsHost(@QueryParam("value") String value, @QueryParam("sort") String sort)
+			throws JsonParseException, JsonMappingException, IOException {
+		ArrayList<Apartment> apartments = readApartments();
+		ArrayList<Apartment> searchedApartments = (ArrayList<Apartment>) apartments.stream().filter(apartment -> {
+			return apartment.getLocation().getAddress().getCity().contains(value)
+					|| apartment.getLocation().getAddress().getStreet().contains(value);
+		}).collect(Collectors.toList());
+		switch (sort) {
+		case "DATE_ASC":
+			searchedApartments.sort(new ApartmentDateComparator(Order.ASC));
+			break;
+
+		case "DATE_DESC":
+			searchedApartments.sort(new ApartmentDateComparator(Order.DESC));
+			break;
+
+		case "GUEST_ASC":
+			searchedApartments.sort(new ApartmentGuestsComparator(Order.ASC));
+			break;
+
+		case "GUEST_DESC":
+			searchedApartments.sort(new ApartmentGuestsComparator(Order.DESC));
+			break;
+
+		case "HOST_ASC":
+			searchedApartments.sort(new ApartmentHostComparator(Order.ASC));
+			break;
+
+		case "HOST_DESC":
+			searchedApartments.sort(new ApartmentHostComparator(Order.DESC));
+			break;
+
+		case "PRICE_ASC":
+			searchedApartments.sort(new ApartmentHostComparator(Order.ASC));
+			break;
+
+		case "PRICE_DESC":
+			searchedApartments.sort(new ApartmentHostComparator(Order.DESC));
+			break;
+
+		case "ROOM_ASC":
+			searchedApartments.sort(new ApartmentRoomsComparator(Order.ASC));
+			break;
+
+		case "ROOM_DESC":
+			searchedApartments.sort(new ApartmentRoomsComparator(Order.DESC));
+			break;
+
+		case "TYPE_ASC":
+			searchedApartments.sort(new ApartmentTypeComparator(Order.ASC));
+			break;
+
+		case "TYPE_DESC":
+			searchedApartments.sort(new ApartmentTypeComparator(Order.DESC));
+			break;
+		}
+		return Response.status(Response.Status.OK).entity(searchedApartments).build();
+	}
 
 	@Path("/{id}/comments")
 	@GET
