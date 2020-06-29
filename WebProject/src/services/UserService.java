@@ -94,6 +94,18 @@ public class UserService {
 		request.getSession().invalidate();
 		return Response.status(Response.Status.OK).build();
 	}
+	
+	@GET
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getById(@PathParam("id") String id) throws JsonParseException, JsonMappingException, NoSuchAlgorithmException, IOException {
+		User u = getUserById(id);
+		if(u != null) {
+			return Response.status(200).entity(u).build();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
 
 	@Path("")
 	@PUT
