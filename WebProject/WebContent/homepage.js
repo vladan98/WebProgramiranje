@@ -84,10 +84,11 @@ function addAppartmentToHostActiveTable(aprt){
 			}
 		})
 	})
-	tr.append(th).append(tdImage).append(tdType).append(tdLoc).append(tdRooms).append(tdGuests).append(dtprice).append(tdRemove)
+	let tdUpdate = $('<td>Update</td>')
+	tr.append(th).append(tdImage).append(tdType).append(tdLoc).append(tdRooms).append(tdGuests).append(dtprice).append(tdRemove).append(tdUpdate)
 	$('#hostAp tbody').append(tr)
 	
-	//tr.click(clickClosure(aprt));
+	tdUpdate.click(clickClosureHost(aprt));
 }
 
 function addAppartmentToHostInactiveTable(aprt){
@@ -149,6 +150,18 @@ function clickClosure(aprt){
 		console.log(aprt)
 		localStorage.wantedApartment = JSON.stringify(aprt)
 		window.location.href= "ViewOneApartment.html"
+	};
+}
+
+function clickClosureHost(aprt){
+	return function() {
+		// Parametar product prosleđen u gornju funkciju će biti vidljiv u ovoj
+		// Ovo znači da je funkcija "zapamtila" za koji je apartman vezana
+		$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		console.log(aprt)
+		localStorage.wantedApartment = JSON.stringify(aprt)
+		window.location.href= "UpdateApartment.html"
 	};
 }
 
