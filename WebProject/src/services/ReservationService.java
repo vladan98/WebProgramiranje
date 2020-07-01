@@ -127,6 +127,33 @@ public class ReservationService {
 
 		return Response.status(Response.Status.OK).entity(reservations).build();
 	}
+	
+	@Path("/host")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getHostReservations()
+			throws JsonParseException, JsonMappingException, IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.HOST)
+			return Response.status(Response.Status.FORBIDDEN).build();
+
+		ArrayList<Reservation> reservations = readReservations();
+		reservations = reservations.stream().filter(reservation -> {
+			try {
+				return getApartmentById(reservation.getApartmentId()).getHostId().equals(loggedUser.getId());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+
+		}).collect(Collectors.toCollection(ArrayList::new));
+		
+
+		return Response.status(Response.Status.OK).entity(reservations).build();
+	}
 
 	@Path("/{id}/host/accept")
 	@PUT
@@ -294,7 +321,7 @@ public class ReservationService {
 				bonus -= 0.1;
 		}
 		reservation.setPrice(apartment.getPrice() * reservation.getNights() * bonus);
-
+		reservation.setStatus(ReservationStatus.CREATED);
 		ArrayList<Reservation> reservations = readReservations();
 		reservations.add(reservation);
 		writeReservations(reservations);
