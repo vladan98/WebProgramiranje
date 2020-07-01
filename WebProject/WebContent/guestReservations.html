@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+    <script src="jquery-3.3.1.min.js"></script>
+	 <link
+      href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    />
+    <script src="./js/layout/Navbar.js"></script>
+    <script src="./js/GuestReservations.js"></script>
+    </head>
+<body>
+	 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"></nav>
+	 <h3>My reservations:</h3>
+	 <table class="table" id="reservations">
+		  <thead class="thead-dark">
+		    <tr>	 
+		      <th scope="col">Apartment location</th>
+		      <th scope="col">Apartment type</th>
+		      <th scope="col">Start Date</th>
+		      <th scope="col">Nights</th>
+		      <th scope="col">Status</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  </tbody>
+	</table>
+	<br>
+	<form id="commentForm" method="POST">
+		<table>
+			<tr>
+				<td>Review: </td><td><textarea rows="4" cols="50" name="comment" id="message" form="reservation"></textarea></td>
+			</tr>
+			<tr>
+				<td>Rate:</td><td><input type="number" min="1" max="10" id="rateNum"></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Post"></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

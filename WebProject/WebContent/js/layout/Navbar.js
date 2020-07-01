@@ -20,13 +20,24 @@ $(document).ready(() => {
     <li class="nav-item">
       <a class="nav-link" href="newAppartment.html">New Apartment</a>
     </li>
+     <li class="nav-item">
+      <a class="nav-link" href="hostReservations.html">Reservations</a>
+    </li>
 `;
+  
+ let guestLink = `
+	 <li class="nav-item">
+	 	<a class="nav-link" href="guestReservations.html">My Reservations</a>
+	 </li>
+ `
 
 	let links = "";
 	if (user.role == "ADMIN")
 		links = adminLinks;
 	if (user.role == "HOST")
 		links = hostLinks;
+	if(user.role == "GUEST")
+		links = guestLink
 
 
   let navbarContent = `<div class="container">

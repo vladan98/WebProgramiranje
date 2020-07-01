@@ -450,6 +450,17 @@ public class ApartmentService {
 		return Response.status(Response.Status.OK).entity(fileInputStreams).build();
 
 	}
+	
+	@Path("/{id}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getApartmentByID(@PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		Apartment apartment = getApartmentById(id);
+		return Response.status(Response.Status.OK).entity(apartment).build();
+	}
 
 	private Apartment getApartmentById(String id) throws JsonParseException, JsonMappingException, IOException {
 		ArrayList<Apartment> apartments = readApartments();
