@@ -42,9 +42,79 @@ $(document).ready(function(){
 		}
 	})
 	
+	$('form#advancedSearch').submit(function(event){
+		event.preventDefault()
+		let startDate = null
+		let endDate = null
+		let city = null
+		let pricemin = null
+		let pricemax = null
+		let roomsmin = null
+		let roomsmax = null
+		let guestmin = null
+		let guestmax = null
+		if($('#endDate').val() != ""){
+			endDate = $('#endDate').val()
+		}
+		if($('#startDate').val() != ""){
+			startDate = $('#startDate').val()
+		}
+		if($('#city').val() != ""){
+			city = $('#city').val()
+		}
+		if($('#pricemin').val() != ""){
+			pricemin = $('#pricemin').val()
+		}
+		if($('#pricemax').val() != ""){
+			pricemax = $('#pricemax').val()
+		}
+		if($('#roomsmin').val() != ""){
+			roomsmin = $('#roomsmin').val()
+		}
+		if($('#roomsmax').val() != ""){
+			roomsmax = $('#roomsmax').val()
+		}
+		if($('#guestmin').val() != ""){
+			guestmin = $('#guestmin').val()
+		}
+		if($('#guestmax').val() != ""){
+			guestmax = $('#guestmax').val()
+		}
+		
+		let sort = $('#sort').val()
+		
+		console.log(endDate + startDate+city+pricemin+pricemax+roomsmin+roomsmax+guestmin+guestmax+sort)
+		$.ajax({
+			type:"POST",
+			url: "rest/apartment/filter?sort=" + sort,
+			contentType: "application/json",
+			data: JSON.stringify({
+				startDate: Date.parse(startDate),
+				endDate: Date.parse(endDate),
+				city: city,
+				priceMin: parseFloat(pricemin),
+				priceMax: parseFloat(pricemax),
+				roomsMin: parseInt(roomsmin),
+				roomsMax: parseInt(roomsmax),
+				guestsMin: parseInt(guestmin),
+				guestsMax: parseInt(guestmax)
+			}),
+			success: function(apartments){
+				for(let ap of apartments){
+					addAppartmentToTable(ap)
+					$('#mainTable').show()
+				}
+			},
+			error: function(){
+				alert("Something bad happened")
+			}
+		})
+	})
+	
 })
 
 function addAppartmentToTable(aprt){
+	$('#result tbody').empty()
 	let tr = $('<tr></tr>')
 	let th = $('<th scope="row">#</th>')
 	let tdImage = $('<td class="w-25"><img src="${aprt.images[0]}" class="img-fluid img-thumbnail" alt="Sheep"></td>')

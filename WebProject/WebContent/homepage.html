@@ -62,6 +62,71 @@ Looking for apartments? Checkout...
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+<br>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Advanced search
+</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Search</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="advancedSearch" method = "POST">
+        	<table>
+        		<tr>
+        			<td>Start Date</td><td><input type="date" id="startDate"></td>
+        		</tr>
+        		<tr>
+        			<td>End Date</td><td><input type="date" id="endDate"></td>
+        		</tr>
+        		<tr>
+        			<td>City</td><td><input type="text" id="city"></td>
+        		</tr>
+        		<tr>
+        			<td>Price min</td><td><input type="number" id="pricemin"></td>
+        		</tr>
+        		<tr>
+        			<td>Price max</td><td><input type="number" id="pricemax"></td>
+        		</tr>
+        		<tr>
+        			<td>Rooms min</td><td><input type="number" id="roomsmin"></td>
+        		</tr>
+        		<tr>
+        			<td>Rooms max</td><td><input type="number" id="roomsmax"></td>
+        		</tr>
+        		<tr>
+        			<td>Guests min</td><td><input type="number" id="guestmin"></td>
+        		</tr>
+        		<tr>
+        			<td>Guests max</td><td><input type="number" id="guestmax"></td>
+        		</tr>
+        		<tr>
+        			<td>Sort</td>
+        			<td><select id="sort">
+        					<option value="PRICE_MIN" selected>Price Min</option>
+        					<option value="PRICE_MAX">Price Max</option>
+        				</select>
+        			</td>
+        		</tr>
+        		<tr>
+        			<td><input type="submit" value="Search"></td>
+        		</tr>
+        	</table>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div class="container" id="mainTable">
   <div class="row">
@@ -88,24 +153,15 @@ Looking for apartments? Checkout...
 		      <td>Cristina</td>
 		      <td>913</td>
 		      <td>2.846</td>
-		       <td>2.846</td>
-		    </tr>
-		    <tr>
-		      <th scope="row">2</th>
-		      <td class="w-25">
-			      <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/sheep-5.jpg" class="img-fluid img-thumbnail" alt="Sheep">
-		      </td>
-		      <td>Bootstrap Grid 4 Tutorial and Examples</td>
-		      <td>Cristina</td>
-		      <td>1.434</td>
-		      <td>3.417</td>
-		       <td>2.846</td>
+		      <td>2.846</td>
 		    </tr>
 		  </tbody>
 		</table>   
     </div>
   </div>
 </div>
+
+
 
 <!-- Host's table for his apartments -->
 <div class="container" id="hostActiveTable">
