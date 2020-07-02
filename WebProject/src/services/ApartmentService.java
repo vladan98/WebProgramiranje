@@ -377,10 +377,10 @@ public class ApartmentService {
 					.collect(Collectors.toCollection(ArrayList::new));
 		}
 
-		apartments = apartments.stream()
-				.filter(apartment -> apartment.getAmenitiesId().stream().anyMatch(
-						amenity -> filterApartment.getAmenitiesId().stream().anyMatch(a -> a.equals(amenity))))
-				.collect(Collectors.toCollection(ArrayList::new));
+//		apartments = apartments.stream()
+//				.filter(apartment -> apartment.getAmenitiesId().stream().anyMatch(
+//						amenity -> filterApartment.getAmenitiesId().stream().anyMatch(a -> a.equals(amenity))))
+//				.collect(Collectors.toCollection(ArrayList::new));
 
 		switch (sort) {
 		case "PRICE_ASC":

@@ -41,6 +41,11 @@ function addToTable(apartment, reservation){
 	let tdStartDate = $('<td>' + d.toString() + '</td>')
 	let tdNights = $('<td>' + reservation.nights + '</td>')
 	let tdStatus = $('<td>' + reservation.status + '</td>')
+	let tdComms = $(`<td> <button onClick="getComments('${
+          apartment.id
+        }')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+						Comments
+					 </button> </td>`)
 	let tdOperation = "<td></td>"
 	let tdOperation2 = "<td></td>"
 	if(reservation.status == "CREATED" || reservation.status == "ACCEPTED"){
@@ -99,6 +104,41 @@ function addToTable(apartment, reservation){
 			}
 		})
 	})
-	tr.append(tdLocation).append(tdType).append(tdStartDate).append(tdNights).append(tdStatus).append(tdOperation).append(tdOperation2).append(tdOperation3)
+	tr.append(tdLocation).append(tdType).append(tdStartDate).append(tdNights).append(tdStatus).append(tdComms).append(tdOperation).append(tdOperation2).append(tdOperation3)
 	$('#reservations tbody').append(tr)
+}
+
+
+const getComments = (id) => {
+  $("#modal-body").empty();
+
+  $.ajax({
+    type: "GET",
+    url: `rest/comment/apartment/${id}/admin-host`,
+    success: (comments) => {
+      comments.forEach((comment) => {
+        $("#modal-body").append(`<div> Rate: ${comment.rate} ***  ${comment.text} </div><button onClick="approve('${
+          comment.id
+        }')" type="button" class="btn btn-primary">Show</button>`);
+      });
+    },
+    error: function () {
+      console.log("something bad happened...");
+    },
+  });
+};
+
+const approve = (id) => {
+	console.log(id)
+	$.ajax({
+		type: "PUT",
+		url: "rest/comment/" + id,
+		success: function(){
+			alert('Successfully approved comment')
+			window.location.reload()
+		},
+		error: function(){
+			alert('error approving comment')
+		}
+	})
 }

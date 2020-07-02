@@ -27,7 +27,7 @@ $(document).ready(function(){
 	if(apartment.commentsId.length != 0){
 		$.ajax({
 			type: "GET",
-			url: "rest/comment/appartment/" + apartment.id +"/guest",
+			url: "rest/comment/apartment/" + apartment.id +"/guest",
 			contentType: "application/json",
 			success: function(comments){
 				for(let comm of comments){
@@ -130,7 +130,7 @@ function addAppartmentToTable(aprt){
 	let tdCheckIn = $('<td>' + aprt.CheckIn + '</td>')
 	let tdCheckOut = $('<td>' + aprt.CheckOut + '</td>')
 	let dtprice = $('<td>' + aprt.price + '</td>')
-	tr.append(tdType).append(tdRooms).append(tdGuests).append(tdLoc).append(tdCheckIn).append(tdCheckOut).append(dtprice)
+	tr.append(tdType).append(tdRooms).append(tdGuests).append(tdLoc).append(dtprice)
 	$('#apartment').append(tr)
 //	tr.click(clickClosure(aprt));
 }
@@ -144,13 +144,15 @@ function addAmenityToList(amenity){
 function addCommentToTable(comment){
 	//get reviewer
 	let reviewer = ''
+	let tdReviewer = $('<td></td>')
+
 	$.ajax({
 		type:"GET",
 		url:'rest/user/' + comment.reviewerId,
 		contentType: "application/json",
 		success:function(user){
 			console.log(user.username)
-			reviewer = username
+			tdReviewer.append(user.username)
 		},
 		error: function(error){
 			console.log(error)
@@ -158,7 +160,6 @@ function addCommentToTable(comment){
 	})
 	//Add fields to table
 	let tr = $('<tr></tr>')
-	let tdReviewer = $('<td>' + reviewer + '</td>')
 	let tdComment = $('<td>' + comment.text + '</td>')
 	let tdRate = $('<td>' + comment.rate + '</td>')
 	tr.append(tdReviewer).append(tdComment).append(tdRate)

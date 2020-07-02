@@ -129,11 +129,7 @@ public class CommentService {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		if (loggedUser.getRole() != Role.HOST)
 			return Response.status(Response.Status.FORBIDDEN).build();
-
-		Apartment apartment = getApartmentById(id);
-		if (apartment == null)
-			return Response.status(Response.Status.NOT_FOUND).build();
-
+		
 		ArrayList<Comment> comments = readComments();
 		for (Comment comment : comments) {
 			if (comment.getId().equals(id)) {
