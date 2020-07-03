@@ -25,9 +25,13 @@ $(document).ready(function(){
 	
 	//update profile
 	
-	//Get all apartments
+
 	$('form#search').submit(function(event){
 		event.preventDefault()
+		$('#hostInactiveAp tbody').empty()
+		$('#result tbody').empty()
+		$('#hostActiveTable tbody').empty()
+		
 		let location = $('#location').val()
 		let sorting = $('#sort').val()
 		let url = ""
@@ -42,6 +46,9 @@ $(document).ready(function(){
 		}
 	})
 	
+	getAmenities()
+
+	
 	$('form#advancedSearch').submit(function(event){
 		event.preventDefault()
 		let startDate = null
@@ -53,6 +60,13 @@ $(document).ready(function(){
 		let roomsmax = null
 		let guestmin = null
 		let guestmax = null
+		let amenities = []
+		var $boxes = $('input[name=amenities]:checked');
+		$boxes.each(function(){
+			amenities.push($(this).val())
+		})
+		console.log('all amenities: ' + amenities)
+		
 		if($('#endDate').val() != ""){
 			endDate = $('#endDate').val()
 		}
@@ -97,7 +111,8 @@ $(document).ready(function(){
 				roomsMin: parseInt(roomsmin),
 				roomsMax: parseInt(roomsmax),
 				guestsMin: parseInt(guestmin),
-				guestsMax: parseInt(guestmax)
+				guestsMax: parseInt(guestmax),
+				amenitiesId: amenities
 			}),
 			success: function(apartments){
 				for(let ap of apartments){
@@ -114,25 +129,25 @@ $(document).ready(function(){
 })
 
 function addAppartmentToTable(aprt){
-	$('#result tbody').empty()
-	let tr = $('<tr></tr>')
-	let th = $('<th scope="row">#</th>')
-	let tdImage = $('<td class="w-25"><img src="${aprt.images[0]}" class="img-fluid img-thumbnail" alt="Sheep"></td>')
+	
+    let tr = $('<tr></tr>')
+	let tdImage = $(`<td class="w-25"><img src="http://localhost:8080/WebProject/rest/apartment/${aprt.id}/image" class="img-fluid img-thumbnail" alt="Picture"></td>`)
 	let tdType = $('<td>' + aprt.apartmentType +'</td>')
 	let tdLoc = $('<td>' + aprt.location.address.street +" " +aprt.location.address.number + " " + aprt.location.address.city  +'</td>')
 	let tdRooms = $('<td>' + aprt.rooms + '</td>')
 	let tdGuests = $('<td>' + aprt.guests + '</td>')
 	let dtprice = $('<td>' + aprt.price + '</td>')
-	tr.append(th).append(tdImage).append(tdType).append(tdLoc).append(tdRooms).append(tdGuests).append(dtprice)
+	tr.append(tdImage).append(tdType).append(tdLoc).append(tdRooms).append(tdGuests).append(dtprice)
 	$('#result tbody').append(tr)
 	
 	tr.click(clickClosure(aprt));
+	
 }
 
 function addAppartmentToHostActiveTable(aprt){
 	let tr = $('<tr></tr>')
 	let th = $('<th scope="row">#</th>')
-	let tdImage = $('<td class="w-25"><img src="${aprt.images[0]}" class="img-fluid img-thumbnail" alt="Sheep"></td>')
+	let tdImage = $(`<td class="w-25"><img src="http://localhost:8080/WebProject/rest/apartment/${aprt.id}/image" class="img-fluid img-thumbnail" alt="Picture"></td>`)
 	let tdType = $('<td>' + aprt.apartmentType +'</td>')
 	let tdLoc = $('<td>' + aprt.location.address.street +" " +aprt.location.address.number + " " + aprt.location.address.city  +'</td>')
 	let tdRooms = $('<td>' + aprt.rooms + '</td>')
@@ -164,7 +179,7 @@ function addAppartmentToHostActiveTable(aprt){
 function addAppartmentToHostInactiveTable(aprt){
 	let tr = $('<tr></tr>')
 	let th = $('<th scope="row">#</th>')
-	let tdImage = $('<td class="w-25"><img src="${aprt.images[0]}" class="img-fluid img-thumbnail" alt="Sheep"></td>')
+	let tdImage = $(`<td class="w-25"><img src="http://localhost:8080/WebProject/rest/apartment/${aprt.id}/image" class="img-fluid img-thumbnail" alt="Picture"></td>`)
 	let tdType = $('<td>' + aprt.apartmentType +'</td>')
 	let tdLoc = $('<td>' + aprt.location.address.street +" " +aprt.location.address.number + " " + aprt.location.address.city  +'</td>')
 	let tdRooms = $('<td>' + aprt.rooms + '</td>')
@@ -197,7 +212,6 @@ function addAppartmentToHostInactiveTable(aprt){
 			url: "rest/apartment/remove/" + id,
 			success:function(){
 				alert('Apartment successfully removed')
-				window.location.reload()
 			},
 			error: function(error){
 				console.log(error)
@@ -242,6 +256,7 @@ function SearchAsGuest(url){
 		contentType:"application/json",
 		success:function(apartments){
 			for(let ap of apartments){
+				
 				addAppartmentToTable(ap)
 			}
 		},
@@ -273,3 +288,28 @@ function SearchAsHost(url,user){
 	})
 }
 
+function getAmenities(){
+	$.ajax({
+		type:"GET",
+		url:"rest/amenity",
+		contentType:"application/json",
+		success:function(amenities){
+			console.log(amenities)
+			for(let amenity of amenities){
+				addAmenity(amenity)
+			}
+		},
+		error:function(){
+			alert('error getting amenities')
+		}
+	})
+}
+
+function addAmenity(amenity){
+	$("#checkboxes").append(`
+	<div class="form-check">
+			<input type="checkbox" class="form-check-input" id="${amenity.id}" name="amenities" value="${amenity.id}" >
+			<label class="form-check-label" for="${amenity.id}">${amenity.name}</label>
+	</div>
+	`);
+}
