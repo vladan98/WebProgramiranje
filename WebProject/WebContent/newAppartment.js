@@ -25,8 +25,8 @@ $(document).ready(function(){
 		let number = $('#number').val()
 		let city = $('#city').val()
 		let postal = $('#postal').val()
-		let latitute = $('#latitute').val()
-		let longitute = $('#longitute').val()
+		let latitute = $('#latitude').val()
+		let longitute = $('#longitude').val()
 		let startDate = $('#startDate').val()
 		let endDate = $('#endDate').val()
 		let price = $('#price').val()
@@ -51,8 +51,8 @@ $(document).ready(function(){
 		}
 
 		var location = {
-			longitute: longitute,
-			latitute: latitute,
+			longitude: parseFloat(longitute),
+			latitude: parseFloat(latitute),
 			address: address
 		}
 
@@ -82,14 +82,44 @@ $(document).ready(function(){
 				location: location,
 				dates: validDates,
 				amenitiesId: amenities,
-				price: price,
+				price: priceDouble,
 			}),
 			contentType:"application/json",
-			success: function(){
+			success: function(apartment){
 				alert('crated sucessfully..')
-				window.location.href="homepage.html"
+				
+//				$.ajax({
+//					type:"POST",
+//					url:"rest/apartment/" + apartment.id +"/image",
+//					success:function(){
+//					
+//					},
+//					error: function(){}
+//					
+//				})
+				//////////////
+				var file = document.getElementById("picture").files[0];
+	            var extension = file.name.split(".").pop();
+	            var type;
+	            if (extension === "jpg" || extension === "jpeg" ||
+	                extension === "JPG" || extension === "JPEG") {
+	                type = "image/jpeg";
+	            } else if (extension === "png" || extension === "PNG") {
+	                type = "image/png";
+	            } else {
+	                alert("Invalid file type");
+	                return;
+	            }
+	            var request = new XMLHttpRequest();
+	            request.open("POST", "rest/apartment/" + apartment.id +"/image");
+	            request.setRequestHeader("Content-Type", type);
+	            request.setRequestHeader("Image-Name", name);
+	            request.send(file);
+				//////////////////
+				//window.location.href="homepage.html"
 			},
-			error: function(){
+			error: function(error){
+				console.log(error)
 				alert('Some error occurred...')
 			}
 		})

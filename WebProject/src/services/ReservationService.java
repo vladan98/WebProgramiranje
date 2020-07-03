@@ -2,6 +2,7 @@ package services;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Date;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Apartment;
+import beans.Gender;
 import beans.Reservation;
 import beans.ReservationStatus;
 import beans.Role;
@@ -150,6 +152,46 @@ public class ReservationService {
 			}
 
 		}).collect(Collectors.toCollection(ArrayList::new));
+		
+
+		return Response.status(Response.Status.OK).entity(reservations).build();
+	}
+	
+	@Path("/host/search")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchHostReservations(@QueryParam("username")String username, @QueryParam("status")String status)
+			throws JsonParseException, JsonMappingException, IOException, NoSuchAlgorithmException {
+		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+		if (loggedUser == null)
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		if (loggedUser.getRole() != Role.HOST)
+			return Response.status(Response.Status.FORBIDDEN).build();
+
+		ArrayList<Reservation> reservations = readReservations();
+		reservations = reservations.stream().filter(reservation -> {
+			try {
+				return getApartmentById(reservation.getApartmentId()).getHostId().equals(loggedUser.getId());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+
+		}).collect(Collectors.toCollection(ArrayList::new));
+		
+		if(username != "" && username != null) {
+			User user = getUserByusername(username);
+			
+			reservations = reservations.stream()
+					.filter(reservation -> reservation.getGuestId().equals(user.getId()))
+					.collect(Collectors.toCollection(ArrayList::new));
+		}
+		if(status != "" && status != null) {
+			reservations = reservations.stream()
+					.filter(reservation -> reservation.getStatus().toString().equals(status))
+					.collect(Collectors.toCollection(ArrayList::new));
+		}
 		
 
 		return Response.status(Response.Status.OK).entity(reservations).build();
@@ -336,6 +378,38 @@ public class ReservationService {
 
 		return Response.status(Response.Status.CREATED).entity(reservation).build();
 	}
+	
+	//@SuppressWarnings("unlikely-arg-type")
+	@GET
+	@Path("/search")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response searchReservation(@QueryParam("username")String username, @QueryParam("status")String status) throws JsonParseException, JsonMappingException, NoSuchAlgorithmException, IOException {
+		ArrayList<Reservation> reservations = readReservations();
+	
+		if(username != "" && username != null) {
+			User user = getUserByusername(username);
+			
+			reservations = reservations.stream()
+					.filter(reservation -> reservation.getGuestId().equals(user.getId()))
+					.collect(Collectors.toCollection(ArrayList::new));
+		}
+		if(status != "" && status != null) {
+			reservations = reservations.stream()
+					.filter(reservation -> reservation.getStatus().toString().equals(status))
+					.collect(Collectors.toCollection(ArrayList::new));
+		}
+		return Response.status(Response.Status.OK).entity(reservations).build();
+	}
+	
+	public User getUserByusername(String username)
+			throws JsonParseException, JsonMappingException, IOException, NoSuchAlgorithmException {
+		for (User u : readUsers()) {
+			if (u.getUsername().contentEquals(username))
+				return u;
+		}
+		return null;
+	}
 
 	private ArrayList<Reservation> readReservations() throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
@@ -387,6 +461,20 @@ public class ReservationService {
 		if (created)
 			mapper.writeValue(holidaysFile, new ArrayList<Date>());
 		return mapper.readValue(holidaysFile, new TypeReference<ArrayList<Date>>() {
+		});
+	}
+	
+	private ArrayList<User> readUsers() throws IOException, NoSuchAlgorithmException {
+		ObjectMapper mapper = new ObjectMapper();
+		File userFile = new File(ctx.getRealPath(".") + PathConfig.USERS_FILE);
+		boolean created = userFile.createNewFile();
+		if (created) {
+			ArrayList<User> admins = new ArrayList<User>();
+			admins.add(new User("admin", "admin", "Admin FirstName", "Admin LastName", Gender.MALE, Role.ADMIN));
+			mapper.writeValue(userFile, admins);
+		}
+
+		return mapper.readValue(userFile, new TypeReference<ArrayList<User>>() {
 		});
 	}
 

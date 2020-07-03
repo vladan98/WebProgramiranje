@@ -15,6 +15,9 @@ $(document).ready(() => {
 	<li class="nav-item">
       <a class="nav-link" href="apartments.html">Apartments</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="AdminReservations.html">Reservations</a>
+    </li>
 `;
   let hostLinks = `
     <li class="nav-item">

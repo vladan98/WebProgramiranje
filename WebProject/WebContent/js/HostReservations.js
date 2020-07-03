@@ -16,6 +16,30 @@ $(document).ready(function(){
 			console.log('error getting reservations')
 		}
 	})
+	
+	
+	$('form#search').submit(function(event){
+		event.preventDefault()
+		$('#reservations tbody').empty()
+		let username = $('#username').val()
+		let status = $('#status').val()
+		console.log(username + status)
+		$.ajax({
+			type:"GET",
+			url: "rest/reservation/host/search?username="+username+"&status="+status,
+			contentType:"application/json",
+			success: function(reservations){
+				for(let res of reservations){
+					addReservationToTable(res)
+				}
+			},
+			error: function(error){
+				console.log(error)
+				alert('error searching reservations')
+			}
+		})
+	})
+	
 })
 
 function addReservationToTable(reservation){
@@ -52,8 +76,10 @@ function addToTable(apartment, reservation){
 		tdOperation = '<td><a href="#" data-id="' + reservation.id + '"class="accept">Accept resercation</a></td>' 
 		tdOperation2 = '<td><a href="#" data-id="' + reservation.id + '"class="decline">Decline resercation</a></td>' 
 	}
-	let tdOperation3 = '<td><a href="#" data-id="' + reservation.id + '"class="end">End reservation</a></td>' 
-	
+	let tdOperation3 = $('<td></td>')
+	if(reservation.status != "REJECTED"){	
+		tdOperation3 = '<td><a href="#" data-id="' + reservation.id + '"class="end">End reservation</a></td>' 
+	}
 	
 
 	$(document).on("click", ".accept", function (){

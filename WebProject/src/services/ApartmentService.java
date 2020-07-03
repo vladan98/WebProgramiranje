@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -397,6 +398,7 @@ public class ApartmentService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addApartment(Apartment a) throws IOException {
+		System.out.println("AP:" + a.toString());
 		User loggedUser = (User) request.getSession().getAttribute("loggedUser");
 		if (loggedUser == null)
 			return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -427,27 +429,36 @@ public class ApartmentService {
 
 		ArrayList<Apartment> apartments = readApartments();
 		for (Apartment apartment : apartments) {
-			if (apartment.getId().equals(apartmentId))
+			if (apartment.getId().equals(apartmentId)) {
 				apartment.getImages().add(fileName);
-			writeApartments(apartments);
-			return Response.status(Response.Status.OK).entity(in).build();
+				writeApartments(apartments);
+				return Response.status(Response.Status.OK).entity(in).build();
+			}
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
 	@Path("/{id}/image")
 	@GET
-	public Response getImage(@PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
-		ArrayList<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
+	@Produces({ "image/jpeg" })
+	public FileInputStream getImage(@PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException {
+		
 		Apartment apartment = getApartmentById(id);
+		/*
 		if (apartment == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
+			*/
 		for (String image : apartment.getImages()) {
 			FileInputStream fileInputStream = new FileInputStream(
 					new File(ctx.getRealPath(".") + PathConfig.APARTMENT_IMAGES + File.separator + image));
-			fileInputStreams.add(fileInputStream);
+			System.out.println(fileInputStream);
+			return fileInputStream;
+			//return Response.status(Response.Status.OK).entity(fileInputStream).build();
 		}
-		return Response.status(Response.Status.OK).entity(fileInputStreams).build();
+		return null;
+		//return Response.status(Response.Status.BAD_REQUEST).build();
+		
+		
 
 	}
 	
