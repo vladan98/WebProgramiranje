@@ -4,7 +4,7 @@
 
 $(document).ready(function(){
 	var user = JSON.parse(localStorage.getItem('user'));
-	$('#commentForm').hide()
+	
 	//Get all users reservations
 	$.ajax({
 		type: "GET",
@@ -103,10 +103,13 @@ function addToTable(apartment, reservation){
 		tdleaveComment = $('<td><button class="btn btn-info" data-id="' + reservation.apartmentId + '">Leave comment</button></td> ')
 	}
 	
+	tdleaveComment.on("click",function(){
+		$('#commentForm').toggle()
+	})
+//	
 	$(document).on("click",'[class*=info]', function(){
 		let id = $(this).attr("data-id")
-		console.log(id)
-		$('#commentForm').toggle()
+		
 		clickClosure(reservation)
 	})
 	tr.append(tdLocation).append(tdType).append(tdStartDate).append(tdNights).append(tdStatus).append(tdCancel).append(tdleaveComment)

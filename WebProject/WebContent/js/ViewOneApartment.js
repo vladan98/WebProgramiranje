@@ -57,6 +57,8 @@ $(document).ready(function(){
 	$('#fromDate').text("Start date: " + date3)
 	$('#toDate').text("End date: "  + date4)
 	console.log(date1.toString() + " " + date2.toString(0))
+	$('#gallery').append(`<img src="http://localhost:8080/WebProject/rest/apartment/${apartment.id}/image" width="800" height="500" class="img-fluid img-thumbnail" alt="Picture"></td>`)
+	
 
 	$(function() {
 		  $('input[name="daterange"]').daterangepicker({

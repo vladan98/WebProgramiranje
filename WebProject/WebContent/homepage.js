@@ -115,6 +115,7 @@ $(document).ready(function(){
 				amenitiesId: amenities
 			}),
 			success: function(apartments){
+				$('#result tbody').empty()
 				for(let ap of apartments){
 					addAppartmentToTable(ap)
 					$('#mainTable').show()
