@@ -60,8 +60,8 @@ function addToTable(apartment, reservation){
 	getHostAndGuest(reservation, apartment)
 	let guest = localStorage.getItem("guest")
 	let host = localStorage.getItem("host")
-	localStorage.removeItem("guest")
-	localStorage.removeItem("host")
+//	localStorage.removeItem("guest")
+//	localStorage.removeItem("host")
 	console.log(guest + " " + host)
 	
 	let tr = $('<tr></tr>')

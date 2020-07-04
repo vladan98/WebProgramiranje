@@ -116,7 +116,7 @@ $(document).ready(function(){
 	            request.setRequestHeader("Image-Name", name);
 	            request.send(file);
 				//////////////////
-				//window.location.href="homepage.html"
+				window.location.href="homepage.html"
 			},
 			error: function(error){
 				console.log(error)
@@ -124,6 +124,20 @@ $(document).ready(function(){
 			}
 		})
 	})
+	
+	
+	map.on('click', function(evt){
+	    console.info(evt.pixel);
+	    console.info(map.getPixelFromCoordinate(evt.coordinate));
+	    console.info(ol.proj.toLonLat(evt.coordinate));
+	    var coords = ol.proj.toLonLat(evt.coordinate);
+	    var lat = coords[1];
+	    var lon = coords[0];
+	    var locTxt = "Latitude: " + lat + " Longitude: " + lon;
+	    // coords is a div in HTML below the map to display
+	    $('#latitude').val(lat) 
+	    $('#longitude').val(lon) 
+	});
 
 })
 

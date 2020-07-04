@@ -308,7 +308,7 @@ public class ReservationService {
 				return c1.compareTo(c2) == 0;
 			});
 			if (!available)
-				return Response.status(Response.Status.BAD_REQUEST).build();
+				return Response.status(Response.Status.BAD_REQUEST).entity("Date is not available").build();
 		}
 
 		for (int i = 1; i <= reservation.getNights(); i++) {
@@ -327,7 +327,7 @@ public class ReservationService {
 				c2.set(Calendar.MINUTE, 0);
 				c2.set(Calendar.SECOND, 0);
 				c2.set(Calendar.MILLISECOND, 0);
-				return c1.compareTo(c2) == 0;
+				return c1.compareTo(c2) != 0;
 			}).collect(Collectors.toCollection(ArrayList::new));
 			apartment.setDates(newDates);
 		}
