@@ -425,6 +425,12 @@ public class ApartmentService {
 		}
 		System.out.println(apartmentId);
 		java.nio.file.Path BASE_DIR = Paths.get(ctx.getRealPath(".") + PathConfig.APARTMENT_IMAGES);
+		
+		File directory = new File(ctx.getRealPath(".") + PathConfig.APARTMENT_IMAGES);
+	    if (! directory.exists()){
+	        directory.mkdir();
+	    }
+		
 		Files.copy(in, BASE_DIR.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
 
 		ArrayList<Apartment> apartments = readApartments();
