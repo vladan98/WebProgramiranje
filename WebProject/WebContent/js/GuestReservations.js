@@ -19,38 +19,7 @@ $(document).ready(function(){
 		}
 	})
 	
-	$('form#commentForm').submit(function(event){
-		event.preventDefault()
-		let reservation = JSON.parse(localStorage.reservation)
-		console.log(reservation)
-		localStorage.removeItem("reservation");
-		let message = $('#message').val()
-		let rate = $('#rateNum').val()
-		if(message == "" || rate == ""){
-			alert("Please leave rate  and review")
-		}
-		let reviewerId = user.id
-		let apartmentId = reservation.apartmentId
-		
-		$.ajax({
-			type: "POST",
-			url: "rest/comment/apartment",
-			contentType:"application/json",
-			data: JSON.stringify({
-				reviewerId: reviewerId,
-				apartmentId: apartmentId,
-				text: message,
-				rate: parseInt(rate)
-			}),
-			success: function(){
-				alert('Successfully left comment!')
-				window.location.reload()
-			},
-			error: function(){
-				alert('Something bad happened...')
-			}
-		})
-	})
+
 })
 
 function addReservationToTable(reservation){
@@ -101,19 +70,64 @@ function addToTable(apartment, reservation){
 	let tdleaveComment = $('<td></td>')
 	if(reservation.status == "REJECTED" || reservation.status == "ENDED"){
 		tdleaveComment = $('<td><button class="btn btn-info" data-id="' + reservation.apartmentId + '">Leave comment</button></td> ')
+		tdleaveComment = $(`<td><button class="btn btn-info" onclick="showForm('${reservation.apartmentId}')"  >Leave comment</button></td>`)
 	}
 	
-	tdleaveComment.on("click",function(){
-		$('#commentForm').toggle()
-	})
-//	
-	$(document).on("click",'[class*=info]', function(){
-		let id = $(this).attr("data-id")
-		
-		clickClosure(reservation)
-	})
+
 	tr.append(tdLocation).append(tdType).append(tdStartDate).append(tdNights).append(tdStatus).append(tdCancel).append(tdleaveComment)
 	$('#reservations tbody').append(tr)
+}
+
+function showForm(apartmentId) {
+	$("#commentsDiv").empty();
+	$("#commentsDiv").append(`
+	<form id="commentForm" method="POST">
+		<table>
+			<tr>
+				<td> <input value=${apartmentId}> </td>
+				<td>Review: </td><td><textarea rows="4" cols="50" name="comment" id="message" form="reservation"></textarea></td>
+			</tr>
+			<tr>
+				<td>Rate:</td><td><input type="number" min="1" max="10" id="rateNum"></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Post"></td>
+			</tr>
+		</table>
+	</form>
+			
+	`)
+	$('form#commentForm').submit(function(event){
+	event.preventDefault()
+	let message = $('#message').val()
+	let rate = $('#rateNum').val()
+	if(message == "" || rate == ""){
+		alert("Please leave rate  and review")
+	}
+	var user = JSON.parse(localStorage.getItem('user'));
+	let reviewerId = user.id
+
+	
+	$.ajax({
+		type: "POST",
+		url: "rest/comment/apartment",
+		contentType:"application/json",
+		data: JSON.stringify({
+			reviewerId: reviewerId,
+			apartmentId: apartmentId,
+			text: message,
+			rate: parseInt(rate)
+		}),
+		success: function(){
+			alert('Successfully left comment!')
+			window.location.reload()
+		},
+		error: function(){
+			alert('Something bad happened...')
+		}
+	})
+})
+	
 }
 
 function clickClosure(reservation){
@@ -122,6 +136,7 @@ function clickClosure(reservation){
 		$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		console.log(reservation)
-		localStorage.reservation = JSON.stringify(reservation)
+		localStorage.setItem("reservation", JSON.stringify(reservation));
+//		localStorage.reservation = JSON.stringify(reservation)
 //		window.location.href= "ViewOneApartment.html"
 }
